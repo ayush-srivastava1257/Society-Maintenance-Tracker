@@ -12,36 +12,36 @@ NestGrid follows a decoupled client-server architecture. The frontend is built a
 
 ```mermaid
 graph TD
-    subgraph Client Layer (React 18 + Vite + TypeScript)
+    subgraph ClientLayer ["Client Layer - React 18, Vite, TypeScript"]
         A[Browser UI Viewport] --> B[React Router DOM]
         B --> C[Resident Hub Pages]
         B --> D[Admin Command Center]
         C --> E[Floating Glass Cards & Modals]
         D --> E
-        E --> F[API Service Layer / Axios Wrapper]
+        E --> F[API Service Layer - Axios Client]
     end
 
-    subgraph API Gateway & Middleware (Node.js + Express)
-        F -->|HTTP REST + JWT Bearer| G[Express Router]
+    subgraph APIGateway ["API Gateway & Middleware - Node.js, Express"]
+        F --> G[Express Router]
         G --> H[Auth Middleware & RBAC]
         G --> I[Multer File Upload Middleware]
         H --> J[Controllers]
     end
 
-    subgraph Service & Data Access Layer
+    subgraph ServiceLayer ["Service & Data Access Layer"]
         J --> K[Complaint Service]
         J --> L[Overdue SLA Engine]
         J --> M[Notice Subsystem]
-        J --> N[Analytics & AI Insights Engine]
+        J --> N[Analytics Engine]
         K --> O[Prisma ORM]
         L --> O
         M --> O
         N --> O
     end
 
-    subgraph Database & External Infrastructure
-        O --> P[(SQLite / PostgreSQL DB)]
-        I --> Q[Local /uploads Media Storage]
+    subgraph Infrastructure ["Database & External Services"]
+        O --> P[SQLite / PostgreSQL DB]
+        I --> Q[Local /uploads Storage]
         K --> R[Nodemailer Email Subsystem]
     end
 ```
@@ -204,7 +204,6 @@ Run backend integration test suite:
 cd server
 npm test
 ```
-*Executes all Jest test suites covering Auth, Complaint Lifecycle, SLA Overdue Detection, and Notice Broadcasting.*
 
 Run frontend production build verification:
 ```bash
