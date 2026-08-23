@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    background-color: #050B14 !important;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color-scheme: dark;
+    min-height: 100vh;
+  }
+
+  body {
+    @apply bg-[#050B14] text-txt-main antialiased min-h-screen;
+  }
+}
+
+@layer utilities {
+  /* Deeper Blackish Blurred Glass Effect across ALL cards, boxes, and containers */
+  .glass-card {
+    background-color: rgba(5, 11, 20, 0.88) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(232, 141, 56, 0.3) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85) !important;
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .glass-card-hover:hover {
+    background-color: rgba(5, 11, 20, 0.94) !important;
+    border-color: rgba(232, 141, 56, 0.55) !important;
+    box-shadow: 0 25px 75px rgba(0, 0, 0, 0.95), 0 0 35px rgba(232, 141, 56, 0.25) !important;
+  }
+}
+
+/* Page Transition Keyframes */
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-page-enter {
+  animation: pageFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-left {
+  animation: slideFromLeft 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-right {
+  animation: slideFromRight 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-text-glow {
+  background-size: 200% auto;
+  animation: textShimmer 5s ease infinite;
+}
+
+/* Custom architectural scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050B14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a2e42;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E88D38;
+}

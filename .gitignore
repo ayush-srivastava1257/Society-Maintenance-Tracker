@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment & Sensitive Config
+.env
+.env.local
+*.env
+
+# Build & Dist Artifacts
+dist/
+build/
+out/
+.next/
+
+# Database Files
+*.db
+*.db-journal
+
+# Uploaded Files
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs & Temporary Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor Files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.DS_Store
