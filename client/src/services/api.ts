@@ -26,6 +26,17 @@ const getHeaders = (isMultipart = false) => {
 };
 
 const handleResponse = async (res: Response) => {
+  const contentType = res.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    const text = await res.text();
+    if (res.status === 404) {
+      throw new Error(
+        'Backend server endpoint not found. Please set VITE_API_BASE_URL in Vercel environment variables to your Render API URL (e.g. https://your-app.onrender.com/api).'
+      );
+    }
+    throw new Error(`Server returned non-JSON response (${res.status}): ${text.substring(0, 100)}`);
+  }
+
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data.message || 'An error occurred');
@@ -38,23 +49,22 @@ export const api = {
   login: async (email: string, password: string): Promise<{ token: string; user: User }> => {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify({ email, password }),
     });
     return handleResponse(res);
   },
 
-  register: async (payload: {
+  register: async (userData: {
     name: string;
     email: string;
     password: string;
-    apartmentNo?: string;
-    role?: 'RESIDENT' | 'ADMIN';
+    apartmentNo: string;
   }): Promise<{ token: string; user: User }> => {
     const res = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      headers: getHeaders(),
+      body: JSON.stringify(userData),
     });
     return handleResponse(res);
   },
@@ -62,7 +72,7 @@ export const api = {
   forgotPassword: async (email: string): Promise<{ message: string }> => {
     const res = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify({ email }),
     });
     return handleResponse(res);
@@ -76,36 +86,31 @@ export const api = {
   },
 
   // COMPLAINTS
-  createComplaint: async (formData: FormData): Promise<{ complaint: Complaint }> => {
-    const res = await fetch(`${API_BASE_URL}/complaints`, {
-      method: 'POST',
-      headers: getHeaders(true),
-      body: formData,
-    });
+  getComplaints: async (filters?: {
+    status?: string;
+    category?: string;
+    priority?: string;
+    search?: string;
+    overdueOnly?: boolean;
+  }): Promise<{ complaints: Complaint[] }> => {
+    const params = new URLSearchParams();
+    if (filters) {
+      if (filters.status) params.append('status', filters.status);
+      if (filters.category) params.append('category', filters.category);
+      if (filters.priority) params.append('priority', filters.priority);
+      if (filters.search) params.append('search', filters.search);
+      if (filters.overdueOnly) params.append('overdueOnly', 'true');
+    }
+
+    const queryString = params.toString();
+    const url = `${API_BASE_URL}/complaints${queryString ? `?${queryString}` : ''}`;
+
+    const res = await fetch(url, { headers: getHeaders() });
     return handleResponse(res);
   },
 
   getMyComplaints: async (): Promise<{ complaints: Complaint[] }> => {
     const res = await fetch(`${API_BASE_URL}/complaints/my`, {
-      headers: getHeaders(),
-    });
-    return handleResponse(res);
-  },
-
-  getAllComplaints: async (filters?: {
-    category?: string;
-    status?: string;
-    priority?: string;
-    search?: string;
-  }): Promise<{ complaints: Complaint[] }> => {
-    const query = new URLSearchParams();
-    if (filters?.category) query.append('category', filters.category);
-    if (filters?.status) query.append('status', filters.status);
-    if (filters?.priority) query.append('priority', filters.priority);
-    if (filters?.search) query.append('search', filters.search);
-
-    const queryString = query.toString() ? `?${query.toString()}` : '';
-    const res = await fetch(`${API_BASE_URL}/complaints${queryString}`, {
       headers: getHeaders(),
     });
     return handleResponse(res);
@@ -118,11 +123,20 @@ export const api = {
     return handleResponse(res);
   },
 
+  createComplaint: async (formData: FormData): Promise<{ complaint: Complaint }> => {
+    const res = await fetch(`${API_BASE_URL}/complaints`, {
+      method: 'POST',
+      headers: getHeaders(true),
+      body: formData,
+    });
+    return handleResponse(res);
+  },
+
   updateComplaintStatus: async (
     id: string,
     status: Status,
     note?: string
-  ): Promise<{ message: string; complaint: Complaint }> => {
+  ): Promise<{ complaint: Complaint }> => {
     const res = await fetch(`${API_BASE_URL}/complaints/${id}/status`, {
       method: 'PATCH',
       headers: getHeaders(),
@@ -134,7 +148,7 @@ export const api = {
   updateComplaintPriority: async (
     id: string,
     priority: Priority
-  ): Promise<{ message: string; complaint: Complaint }> => {
+  ): Promise<{ complaint: Complaint }> => {
     const res = await fetch(`${API_BASE_URL}/complaints/${id}/priority`, {
       method: 'PATCH',
       headers: getHeaders(),
@@ -144,34 +158,38 @@ export const api = {
   },
 
   // NOTICES
-  getAllNotices: async (): Promise<{ notices: Notice[] }> => {
+  getNotices: async (): Promise<{ notices: Notice[] }> => {
     const res = await fetch(`${API_BASE_URL}/notices`, {
       headers: getHeaders(),
     });
     return handleResponse(res);
   },
 
-  createNotice: async (payload: {
+  createNotice: async (noticeData: {
     title: string;
     content: string;
     isImportant?: boolean;
-  }): Promise<{ message: string; notice: Notice }> => {
+  }): Promise<{ notice: Notice }> => {
     const res = await fetch(`${API_BASE_URL}/notices`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify(payload),
+      body: JSON.stringify(noticeData),
     });
     return handleResponse(res);
   },
 
   updateNotice: async (
     id: string,
-    payload: { title?: string; content?: string; isImportant?: boolean }
-  ): Promise<{ message: string; notice: Notice }> => {
+    noticeData: {
+      title?: string;
+      content?: string;
+      isImportant?: boolean;
+    }
+  ): Promise<{ notice: Notice }> => {
     const res = await fetch(`${API_BASE_URL}/notices/${id}`, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: getHeaders(),
-      body: JSON.stringify(payload),
+      body: JSON.stringify(noticeData),
     });
     return handleResponse(res);
   },
@@ -200,22 +218,18 @@ export const api = {
   },
 
   // SETTINGS
-  getSettings: async (): Promise<{ settings: Record<string, string> }> => {
+  getSettings: async (): Promise<{ thresholdDays: number }> => {
     const res = await fetch(`${API_BASE_URL}/settings`, {
       headers: getHeaders(),
     });
     return handleResponse(res);
   },
 
-  updateSettings: async (payload: {
-    overdueThresholdDays?: number;
-    emailNotificationsEnabled?: boolean;
-    importantNoticeEmailEnabled?: boolean;
-  }): Promise<{ message: string; settings: Record<string, string> }> => {
+  updateSettings: async (thresholdDays: number): Promise<{ thresholdDays: number }> => {
     const res = await fetch(`${API_BASE_URL}/settings`, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: getHeaders(),
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ thresholdDays }),
     });
     return handleResponse(res);
   },
