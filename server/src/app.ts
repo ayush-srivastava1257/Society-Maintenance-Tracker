@@ -20,9 +20,20 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static uploaded complaint photos
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Root landing endpoint
+app.get('/', (_req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'ok',
+    name: 'NestGrid Backend API',
+    version: '1.0.0',
+    message: 'Backend server is running smoothly. API endpoints available under /api',
+    health: '/api/health',
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', name: 'SocietyOS API', version: '1.0.0' });
+  res.status(200).json({ status: 'ok', name: 'NestGrid API', version: '1.0.0' });
 });
 
 // API Routes
