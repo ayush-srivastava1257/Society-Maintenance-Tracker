@@ -78,6 +78,13 @@ export const api = {
     return handleResponse(res);
   },
 
+  getCurrentUser: async (): Promise<{ user: User }> => {
+    const res = await fetch(`${API_BASE_URL}/auth/me`, {
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
   getMe: async (): Promise<{ user: User }> => {
     const res = await fetch(`${API_BASE_URL}/auth/me`, {
       headers: getHeaders(),
@@ -86,27 +93,44 @@ export const api = {
   },
 
   // COMPLAINTS
-  getComplaints: async (filters?: {
+  createComplaint: async (formData: FormData): Promise<{ complaint: Complaint }> => {
+    const res = await fetch(`${API_BASE_URL}/complaints`, {
+      method: 'POST',
+      headers: getHeaders(true),
+      body: formData,
+    });
+    return handleResponse(res);
+  },
+
+  getComplaints: async (params?: {
     status?: string;
     category?: string;
     priority?: string;
     search?: string;
     overdueOnly?: boolean;
-  }): Promise<{ complaints: Complaint[] }> => {
-    const params = new URLSearchParams();
-    if (filters) {
-      if (filters.status) params.append('status', filters.status);
-      if (filters.category) params.append('category', filters.category);
-      if (filters.priority) params.append('priority', filters.priority);
-      if (filters.search) params.append('search', filters.search);
-      if (filters.overdueOnly) params.append('overdueOnly', 'true');
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    complaints: Complaint[];
+    pagination: { total: number; page: number; totalPages: number };
+  }> => {
+    const query = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        if (val !== undefined && val !== null && val !== '') {
+          query.append(key, String(val));
+        }
+      });
     }
 
-    const queryString = params.toString();
-    const url = `${API_BASE_URL}/complaints${queryString ? `?${queryString}` : ''}`;
-
-    const res = await fetch(url, { headers: getHeaders() });
+    const res = await fetch(`${API_BASE_URL}/complaints?${query.toString()}`, {
+      headers: getHeaders(),
+    });
     return handleResponse(res);
+  },
+
+  getAllComplaints: async (params?: any) => {
+    return api.getComplaints(params);
   },
 
   getMyComplaints: async (): Promise<{ complaints: Complaint[] }> => {
@@ -119,15 +143,6 @@ export const api = {
   getComplaintById: async (id: string): Promise<{ complaint: Complaint }> => {
     const res = await fetch(`${API_BASE_URL}/complaints/${id}`, {
       headers: getHeaders(),
-    });
-    return handleResponse(res);
-  },
-
-  createComplaint: async (formData: FormData): Promise<{ complaint: Complaint }> => {
-    const res = await fetch(`${API_BASE_URL}/complaints`, {
-      method: 'POST',
-      headers: getHeaders(true),
-      body: formData,
     });
     return handleResponse(res);
   },
@@ -163,6 +178,10 @@ export const api = {
       headers: getHeaders(),
     });
     return handleResponse(res);
+  },
+
+  getAllNotices: async (): Promise<{ notices: Notice[] }> => {
+    return api.getNotices();
   },
 
   createNotice: async (noticeData: {
@@ -218,14 +237,26 @@ export const api = {
   },
 
   // SETTINGS
-  getSettings: async (): Promise<{ thresholdDays: number }> => {
+  getSettings: async (): Promise<{
+    thresholdDays: number;
+    settings: { overdueThresholdDays: number };
+  }> => {
     const res = await fetch(`${API_BASE_URL}/settings`, {
       headers: getHeaders(),
     });
-    return handleResponse(res);
+    const data = await handleResponse(res);
+    const thresholdDays = data.thresholdDays || data.settings?.overdueThresholdDays || 3;
+    return {
+      thresholdDays,
+      settings: { overdueThresholdDays: thresholdDays },
+    };
   },
 
-  updateSettings: async (thresholdDays: number): Promise<{ thresholdDays: number }> => {
+  updateSettings: async (
+    payload: number | { overdueThresholdDays: number }
+  ): Promise<{ thresholdDays: number }> => {
+    const thresholdDays =
+      typeof payload === 'number' ? payload : payload.overdueThresholdDays;
     const res = await fetch(`${API_BASE_URL}/settings`, {
       method: 'PUT',
       headers: getHeaders(),
