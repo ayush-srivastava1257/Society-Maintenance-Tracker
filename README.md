@@ -5,7 +5,7 @@
 NestGrid is an enterprise-grade, full-stack maintenance management platform designed for modern apartment communities, residential societies, and facility managers. It streamlines maintenance complaint tracking, resolution auditability, community notice broadcasting, and operational SLA analytics within a cinematic architectural interface.
 
 - **Live Hosted Application**: [https://society-maintenance-tracker-sooty-theta.vercel.app/](https://society-maintenance-tracker-sooty-theta.vercel.app/)
-- **Live Backend API**: [https://society-maintenance-tracker-u83a.onrender.com/](https://society-maintenance-tracker-u83a.onrender.com/)
+- **Live Backend API**: [https://nestgrid-backend-api.onrender.com/](https://nestgrid-backend-api.onrender.com/)
 - **GitHub Repository**: [https://github.com/ayush-srivastava1257/Society-Maintenance-Tracker](https://github.com/ayush-srivastava1257/Society-Maintenance-Tracker)
 
 ---
@@ -13,7 +13,7 @@ NestGrid is an enterprise-grade, full-stack maintenance management platform desi
 ## Live Application & Demo Access
 
 - **Live Web Application URL**: [https://society-maintenance-tracker-sooty-theta.vercel.app/](https://society-maintenance-tracker-sooty-theta.vercel.app/)
-- **Live Backend API Server URL**: [https://society-maintenance-tracker-u83a.onrender.com/](https://society-maintenance-tracker-u83a.onrender.com/)
+- **Live Backend API Server URL**: [https://nestgrid-backend-api.onrender.com/](https://nestgrid-backend-api.onrender.com/)
 
 ### Demo Credentials
 - **Admin Portal**: `admin@societyos.app` / `Admin@123` *(or click **Demo Admin** on login screen)*
