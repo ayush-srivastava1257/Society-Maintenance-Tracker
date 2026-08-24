@@ -4,6 +4,19 @@
 
 NestGrid is an enterprise-grade, full-stack maintenance management platform designed for modern apartment communities, residential societies, and facility managers. It streamlines maintenance complaint tracking, resolution auditability, community notice broadcasting, and operational SLA analytics within a cinematic architectural interface.
 
+- **Live Hosted Application**: [https://society-maintenance-tracker-sooty-theta.vercel.app/](https://society-maintenance-tracker-sooty-theta.vercel.app/)
+- **GitHub Repository**: [https://github.com/ayush-srivastava1257/Society-Maintenance-Tracker](https://github.com/ayush-srivastava1257/Society-Maintenance-Tracker)
+
+---
+
+## 🌐 Live Application & Demo Access
+
+- **Live Web Application URL**: [https://society-maintenance-tracker-sooty-theta.vercel.app/](https://society-maintenance-tracker-sooty-theta.vercel.app/)
+
+### 🔑 1-Click Demo Credentials
+- **Admin Portal**: `admin@societyos.app` / `Admin@123` *(or click **Demo Admin** on login screen)*
+- **Resident Portal**: `ananya@societyos.app` / `Resident@123` *(or click **Demo Resident** on login screen)*
+
 ---
 
 ## Architecture Overview & System Diagram
@@ -187,13 +200,6 @@ npm run dev
 ```
 
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
-
----
-
-## Demo Credentials
-
-- **Admin Portal**: `admin@societyos.app` / `Admin@123` *(or click Demo Admin)*
-- **Resident Portal**: `ananya@societyos.app` / `Resident@123` *(or click Demo Resident)*
 
 ---
 
